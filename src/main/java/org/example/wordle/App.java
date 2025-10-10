@@ -1,0 +1,111 @@
+package org.example.wordle;
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import org.example.wordle.control.GameControllerFX;
+import org.example.wordle.io.Persistence;
+import org.example.wordle.model.Dictionary;
+import org.example.wordle.model.OpenDictionary;
+import org.example.wordle.model.WordleModel;
+import org.example.wordle.model.SimpleDictionary;
+import org.example.wordle.viewfx.BoardViewFX;
+import org.example.wordle.viewfx.KeyboardViewFX;
+
+
+import java.nio.file.Path;
+
+public class App extends Application {
+    private WordleModel model;
+    private BoardViewFX board;
+    private KeyboardViewFX keyboard;
+    private GameControllerFX controller;
+
+
+    private static final Path SAVE_PATH = Path.of(System.getProperty("user.home"), ".wordle", "save.txt");
+
+
+    @Override public void start(Stage stage) {
+        Dictionary dict = new OpenDictionary(new SimpleDictionary());
+        this.model = new WordleModel(dict);
+        this.board = new BoardViewFX(model);
+        this.keyboard = new KeyboardViewFX();
+        this.controller = new GameControllerFX(model, board, keyboard);
+
+
+        BorderPane root = new BorderPane();
+        root.setPadding(new Insets(12));
+        root.setCenter(board);
+        root.setBottom(new HBox(keyboard));
+
+
+        MenuBar mb = new MenuBar();
+        Menu game = new Menu("Game");
+        MenuItem miReset = new MenuItem("Reset");
+        MenuItem miSave = new MenuItem("Save");
+        MenuItem miLoad = new MenuItem("Load");
+        game.getItems().addAll(miReset, miSave, miLoad);
+        mb.getMenus().add(game);
+        root.setTop(mb);
+
+
+        miReset.setOnAction(e -> model.reset(null));
+        miSave.setOnAction(e -> save());
+        miLoad.setOnAction(e -> load());
+
+
+        Scene scene = new Scene(root, 480, 640);
+        controller.attachToScene(scene);
+        stage.setTitle("Wordle — JavaFX MVC Starter");
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+
+    private void save() {
+        try {
+            Persistence.save(SAVE_PATH, model.getSecretDebug(), model.getGuesses(), model.getStatus());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    private void load() {
+        try {
+            var loaded = Persistence.load(SAVE_PATH);
+            Dictionary dict = new SimpleDictionary();
+            WordleModel newModel = new WordleModel(dict, loaded.secret);
+            for (String g : loaded.guesses) newModel.submitGuess(g);
+
+
+// swap into UI
+            var scene = getPrimaryStage().getScene();
+            BorderPane root = (BorderPane) scene.getRoot();
+            BoardViewFX newBoard = new BoardViewFX(newModel);
+            KeyboardViewFX newKeyboard = new KeyboardViewFX();
+            GameControllerFX newController = new GameControllerFX(newModel, newBoard, newKeyboard);
+            root.setCenter(newBoard);
+            root.setBottom(new HBox(newKeyboard));
+            newController.attachToScene(scene);
+
+
+            this.model = newModel; this.board = newBoard; this.keyboard = newKeyboard; this.controller = newController;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    private Stage getPrimaryStage() { return (Stage) board.getScene().getWindow(); }
+
+
+    public static void main(String[] args) { launch(args); }
+}
