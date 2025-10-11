@@ -14,18 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-
 public class KeyboardViewFX extends VBox {
     private static final String[] ROWS = { "QWERTYUIOP", "ASDFGHJKL", "⌫ZXCVBNM⏎" };
     private final Map<Character, Button> buttons = new HashMap<>();
     private Consumer<String> handler = s -> {};
 
-
     public KeyboardViewFX() {
         setSpacing(6);
         setPadding(new Insets(8));
         setAlignment(Pos.CENTER);
-
 
         for (String row : ROWS) {
             HBox h = new HBox(6);
@@ -43,9 +40,7 @@ public class KeyboardViewFX extends VBox {
         }
     }
 
-
     public void setHandler(Consumer<String> h) { this.handler = h; }
-
 
     public void updateColors(KeyboardState state) {
         Map<Character, LetterFeedback> map = state.snapshot();

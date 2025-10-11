@@ -16,16 +16,13 @@ import org.example.wordle.util.ModelListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BoardViewFX extends GridPane implements ModelListener {
     private static final int TILE = 56;
     private static final int GAP = 8;
 
-
     private final WordleModel model;
     private final List<Tile> tiles = new ArrayList<>();
     private String preview = ""; // current unsubmitted guess
-
 
     public BoardViewFX(WordleModel model) {
         this.model = model;
@@ -34,7 +31,6 @@ public class BoardViewFX extends GridPane implements ModelListener {
         setVgap(GAP);
         setAlignment(Pos.CENTER);
         setStyle("-fx-background-color: white;");
-
 
 // create grid
         for (int r = 0; r < WordleModel.MAX_TURNS; r++) {
@@ -47,20 +43,16 @@ public class BoardViewFX extends GridPane implements ModelListener {
         render();
     }
 
-
     public void setPreview(String text) {
         this.preview = text == null ? "" : text.toUpperCase();
         render();
     }
 
-
     @Override public void onModelChanged() { render(); }
-
 
     private void render() {
 // clear
         for (Tile t : tiles) t.setNeutral();
-
 
 // filled rows
         var guesses = model.getGuesses();
@@ -81,11 +73,9 @@ public class BoardViewFX extends GridPane implements ModelListener {
         }
     }
 
-
     private static class Tile extends StackPane {
         private final Rectangle rect = new Rectangle(TILE, TILE);
         private final Text letter = new Text("");
-
 
         Tile() {
             rect.setArcWidth(8); rect.setArcHeight(8);
@@ -96,7 +86,6 @@ public class BoardViewFX extends GridPane implements ModelListener {
             setAlignment(Pos.CENTER);
         }
 
-
         void setNeutral() {
             rect.setStroke(Color.web("#AAB0B6"));
             rect.setFill(Color.web("#ECEFF3"));
@@ -104,14 +93,12 @@ public class BoardViewFX extends GridPane implements ModelListener {
             letter.setText("");
         }
 
-
         void setPreview(char ch) {
             rect.setStroke(Color.web("#5A6B7A"));
             rect.setFill(Color.WHITE);
             letter.setFill(Color.BLACK);
             letter.setText(String.valueOf(Character.toUpperCase(ch)));
         }
-
 
         void setResult(char ch, LetterFeedback fb) {
             switch (fb) {

@@ -1,8 +1,6 @@
 package org.example.wordle.io;
 
-
 import org.example.wordle.model.GameStatus;
-
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /** Simple, Gson-free persistence.
  * Format (UTF-8 text):
@@ -30,7 +27,6 @@ public class Persistence {
         Files.write(file, out, StandardCharsets.UTF_8);
     }
 
-
     public static Loaded load(Path file) throws IOException {
         List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
         if (lines.size() < 3) throw new IOException("Corrupt save file: too few lines");
@@ -44,7 +40,6 @@ public class Persistence {
         for (int i = 0; i < n; i++) guesses.add(lines.get(3 + i).trim().toUpperCase());
         return new Loaded(secret, guesses);
     }
-
 
     public static class Loaded {
         public final String secret;

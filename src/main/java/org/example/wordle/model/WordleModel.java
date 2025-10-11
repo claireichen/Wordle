@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class WordleModel extends ObservableModel {
     public static final int WORD_LENGTH = 5;
     public static final int MAX_TURNS = 6;
-
 
     private final Dictionary dictionary;
     private String secret;
@@ -19,7 +17,6 @@ public class WordleModel extends ObservableModel {
     private GameStatus status = GameStatus.IN_PROGRESS;
     private boolean hardMode = false; // Hard Mode: reuse revealed letters
 
-
     public WordleModel(Dictionary dictionary, String fixedSecretOrNull) {
         this.dictionary = dictionary;
         this.secret = (fixedSecretOrNull != null) ? fixedSecretOrNull.toUpperCase() : dictionary.randomSecret();
@@ -27,11 +24,9 @@ public class WordleModel extends ObservableModel {
         if (!secret.matches("[A-Z]{5}")) throw new IllegalArgumentException("Secret must be letters only");
     }
 
-
     public WordleModel(Dictionary dictionary) {
         this(dictionary, null);
     }
-
 
     // ----- Getters for View -----
     public int turnsTaken() {
@@ -58,7 +53,6 @@ public class WordleModel extends ObservableModel {
         return secret;
     } // for testing/demo only
 
-
     // ----- Modes -----
     public void setHardMode(boolean enabled) {
         this.hardMode = enabled;
@@ -67,7 +61,6 @@ public class WordleModel extends ObservableModel {
     public boolean isHardMode() {
         return hardMode;
     }
-
 
     // ----- Game API -----
     public List<LetterFeedback> submitGuess(String guess) {
@@ -79,16 +72,13 @@ public class WordleModel extends ObservableModel {
         if (!dictionary.isValidWord(guess)) throw new IllegalArgumentException("Not in word list");
         if (hardMode) enforceHardMode(guess);
 
-
         List<LetterFeedback> row = evaluate(guess, secret);
         guesses.add(guess);
         feedback.add(row);
         for (int i = 0; i < WORD_LENGTH; i++) keyboard.upgrade(guess.charAt(i), row.get(i));
 
-
         if (guess.equals(secret)) status = GameStatus.WON;
         else if (guesses.size() >= MAX_TURNS) status = GameStatus.LOST;
-
 
         notifyListeners();
         return row;
@@ -102,7 +92,6 @@ public class WordleModel extends ObservableModel {
         secret = (fixedSecretOrNull != null) ? fixedSecretOrNull.toUpperCase() : dictionary.randomSecret();
         notifyListeners();
     }
-
 
     private void enforceHardMode(String guess) {
 // Build constraints from previous feedback (greens fixed; min counts for green+yellow letters)
@@ -147,13 +136,11 @@ public class WordleModel extends ObservableModel {
         }
     }
 
-
     public static List<LetterFeedback> evaluate(String guess, String secret) {
         guess = guess.toUpperCase();
         secret = secret.toUpperCase();
         LetterFeedback[] fb = new LetterFeedback[WORD_LENGTH];
         int[] remain = new int[26];
-
 
         for (int i = 0; i < WORD_LENGTH; i++) {
             char g = guess.charAt(i), s = secret.charAt(i);

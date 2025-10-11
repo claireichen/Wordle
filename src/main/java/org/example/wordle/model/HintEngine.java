@@ -15,17 +15,14 @@ import java.util.stream.Collectors;
 public class HintEngine {
     private final List<String> corpus; // uppercase 5-letter words
 
-
     /** Loads words from /wordlist.txt on the classpath. */
     public HintEngine() {
         this(loadWordList());
     }
 
-
     public HintEngine(List<String> wordsUppercase) {
         this.corpus = new ArrayList<>(wordsUppercase);
     }
-
 
     public List<String> suggest(List<String> guesses, List<List<LetterFeedback>> fb, int k) {
         List<String> cand = filterCandidates(guesses, fb);
