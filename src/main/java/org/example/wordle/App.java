@@ -3,11 +3,11 @@ package org.example.wordle;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.example.wordle.control.GameControllerFX;
@@ -40,7 +40,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        // Dictionary: accept any A–Z guess, but choose secret from wordlist.txt
+        // Dictionary: accept any A–Z guess, but pick secrets from wordlist.txt
         Dictionary dict = new OpenDictionary(new SimpleDictionary());
 
         this.model = new WordleModel(dict);
@@ -66,20 +66,25 @@ public class App extends Application {
         // Menu bar
         MenuBar mb = new MenuBar();
         Menu game = new Menu("Game");
+
         MenuItem miReset = new MenuItem("Reset");
         MenuItem miSave  = new MenuItem("Save");
         MenuItem miLoad  = new MenuItem("Load");
         MenuItem miHint  = new MenuItem("Smart Hint…");
         MenuItem miStats = new MenuItem("Statistics…");
-        game.getItems().addAll(miReset, miSave, miLoad, miHint, miStats);
+        CheckMenuItem miHard = new CheckMenuItem("Hard Mode");
+
+        game.getItems().addAll(miReset, miSave, miLoad, miHint, miStats, miHard);
         mb.getMenus().add(game);
         root.setTop(mb);
 
+        // Handlers
         miReset.setOnAction(e -> model.reset(null));
         miSave.setOnAction(e -> save());
         miLoad.setOnAction(e -> load());
         miHint.setOnAction(e -> showHint());
         miStats.setOnAction(e -> showStats());
+        miHard.setOnAction(e -> model.setHardMode(miHard.isSelected()));
 
         Scene scene = new Scene(root, 480, 640);
         controller.attachToScene(scene);
@@ -138,15 +143,14 @@ public class App extends Application {
         String body = suggestions.isEmpty()
                 ? "No suggestions (constraints too tight)."
                 : String.join(", ", suggestions);
-        var a = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.INFORMATION, body);
+        var a = new Alert(Alert.AlertType.INFORMATION, body);
         a.setHeaderText("Smart Hint (top candidates)");
         a.setTitle("Hint");
         a.showAndWait();
     }
 
     private void showStats() {
-        var box = new javafx.scene.layout.VBox(8);
+        VBox box = new VBox(8);
         box.setPadding(new Insets(12));
 
         int games = stats.getGames();
@@ -155,40 +159,38 @@ public class App extends Application {
         double winPct = stats.getWinPercentage();
         int[] dist = stats.getGuessDistribution();
 
-        var header = new javafx.scene.control.Label("Statistics");
+        Label header = new Label("Statistics");
         header.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
-        var line1 = new javafx.scene.control.Label("Games Played: " + games);
-        var line2 = new javafx.scene.control.Label(String.format("Win %%: %.1f%%", winPct));
-        var line3 = new javafx.scene.control.Label("Wins: " + wins + "    Losses: " + losses);
-        box.getChildren().addAll(header, line1, line2, line3, new javafx.scene.control.Separator());
+        Label line1 = new Label("Games Played: " + games);
+        Label line2 = new Label(String.format("Win %%: %.1f%%", winPct));
+        Label line3 = new Label("Wins: " + wins + "    Losses: " + losses);
+        box.getChildren().addAll(header, line1, line2, line3, new Separator());
 
         int max = 1; for (int v : dist) max = Math.max(max, v);
         int barMaxWidth = 280;
         for (int i = 0; i < 6; i++) {
             int v = dist[i];
             double w = (max == 0) ? 0 : (barMaxWidth * (v / (double) max));
-            var row = new javafx.scene.layout.HBox(8);
-            var lab = new javafx.scene.control.Label((i + 1) + ":");
+            HBox row = new HBox(8);
+            Label lab = new Label((i + 1) + ":");
             lab.setPrefWidth(24);
-            var bar = new javafx.scene.layout.Region();
+            Region bar = new Region();
             bar.setPrefWidth(Math.max(4, w));
             bar.setMinHeight(18); bar.setMaxHeight(18);
             bar.setStyle("-fx-background-color: #6AAA64; -fx-background-radius: 4;");
-            var count = new javafx.scene.control.Label(" " + v);
+            Label count = new Label(" " + v);
             row.getChildren().addAll(lab, bar, count);
             box.getChildren().add(row);
         }
 
-        var sc = new javafx.scene.Scene(box);
-        var st = new javafx.stage.Stage();
+        Scene sc = new Scene(box);
+        Stage st = new Stage();
         st.setTitle("Wordle — Statistics");
         st.initOwner(primary);
         st.setScene(sc);
         st.setResizable(false);
         st.show();
     }
-
-    private Stage getPrimaryStage() { return primary; }
 
     public static void main(String[] args) { launch(args); }
 }
