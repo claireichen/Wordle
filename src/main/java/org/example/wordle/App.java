@@ -13,12 +13,7 @@ import javafx.stage.Stage;
 import org.example.wordle.control.GameControllerFX;
 import org.example.wordle.io.Persistence;
 import org.example.wordle.io.StatsIO;
-import org.example.wordle.model.Dictionary;
-import org.example.wordle.model.OpenDictionary;
-import org.example.wordle.model.SimpleDictionary;
-import org.example.wordle.model.Stats;
-import org.example.wordle.model.WordleModel;
-import org.example.wordle.model.HintEngine;
+import org.example.wordle.model.*;
 import org.example.wordle.viewfx.BoardViewFX;
 import org.example.wordle.viewfx.KeyboardViewFX;
 
@@ -109,7 +104,7 @@ public class App extends Application {
             var loaded = Persistence.load(SAVE_PATH);
 
             // Keep OpenDictionary behavior on load as well
-            Dictionary dict = new OpenDictionary(new SimpleDictionary());
+            Dictionary dict = new EnglishAllowListDictionary(new SimpleDictionary(), "/english-words-5.txt");
             WordleModel newModel = new WordleModel(dict, loaded.secret);
             for (String g : loaded.guesses) newModel.submitGuess(g);
 
