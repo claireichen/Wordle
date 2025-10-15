@@ -36,7 +36,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         // Dictionary: accept any A–Z guess, but pick secrets from wordlist.txt
-        Dictionary dict = new OpenDictionary(new SimpleDictionary());
+        Dictionary dict = new EnglishAllowListDictionary(new SimpleDictionary(), "english-words-5.txt");
 
         this.model = new WordleModel(dict);
         this.board = new BoardViewFX(model);
