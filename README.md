@@ -11,6 +11,9 @@
    ```bash
    mvn -U clean javafx:run
 
-## Optional Run tests:
-mvn test
+**Optional Run tests:**
+```bash
+   mvn test
+
+## Feature List
 
