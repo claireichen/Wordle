@@ -11,9 +11,37 @@
    ```bash
    mvn -U clean javafx:run
 
-**Optional Run tests:**
-```bash
-   mvn test
-
 ## Feature List
+Core Wordle gameplay
+- 6 attempts to guess a 5-letter secret word
+- Feedback colors: 🟩 correct spot, 🟨 wrong spot, ⬛ not in word
+- On-screen keyboard with live color updates
+  
+Smart Hint System (Game → Smart Hint…)
+- Suggests top candidate guesses using letter-frequency scoring over remaining candidates
 
+Statistics Dashboard (Game → Statistics…)
+- Games played, wins/losses, win %, and guess distribution (1–6)
+- Auto-saved to ~/.wordle/stats.txt
+
+Hard Mode (Game → Hard Mode)
+- Must reuse revealed letters; all greens must stay fixed in position
+
+Persistence
+- Save/Load current game to/from ~/.wordle/save.txt
+- Simple text format (no external JSON libs)
+  
+Quality of life
+- “Play Again” prompt after finishing a game (picks a new secret)
+- Non-modular JavaFX setup (runs on classpath via Maven plugin)
+
+## Controls
+- Typing: Physical keyboard letters
+- Delete: Backspace (or on-screen ⌫)
+- Submit: Enter (or on-screen ⏎)
+- Menu Actions:
+   - Game → Reset: New game with a new secret
+   - Game → Save / Load
+   - Game → Smart Hint…
+   - Game → Statistics…
+   - Game → Hard Mode (toggle)
