@@ -14,7 +14,10 @@
 ## Feature List
 Core Wordle gameplay
 - 6 attempts to guess a 5-letter secret word
-- Feedback colors: 🟩 correct spot, 🟨 wrong spot, ⬛ not in word
+- Feedback colors:
+     - 🟩 correct spot
+     - 🟨 wrong spot
+     - ⬛ not in word
 - On-screen keyboard with live color updates
   
 Smart Hint System (Game → Smart Hint…)
