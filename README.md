@@ -45,3 +45,8 @@ Quality of life
    - Game → Smart Hint…
    - Game → Statistics…
    - Game → Hard Mode (toggle)
+
+## Known Issues
+- Dictionary scope: by default, only words presented in `english-words-5.txt` are accepted as guesses
+- Fixed window size: main window is not resizable
+- Hints are heuristic: smart hints use frequency scoring; suggestions may still miss the optimal play in some cases
